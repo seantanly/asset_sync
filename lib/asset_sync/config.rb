@@ -1,3 +1,5 @@
+require 'pathname'
+
 module AssetSync
   class Config
     include ActiveModel::Validations
@@ -64,9 +66,10 @@ module AssetSync
     end
 
     def manifest_path
-      directory =
-        Rails.application.config.assets.manifest || default_manifest_directory
-      File.join(directory, "manifest.yml")
+      path = Pathname(Rails.application.config.assets.manifest || default_manifest_directory)
+      return path.to_s if path.file?
+
+      path.join('manifest.yml').to_s
     end
 
     def gzip?

@@ -225,6 +225,22 @@ describe AssetSync do
       Rails.application.config.assets.prefix = 'custom_assets'
       AssetSync.config.manifest_path.should =~ /public\/custom_assets\/manifest.yml/
     end
+
+    context "when Rails.application.config.assets.manifest is path" do
+      it "config.manifest_path should return manifest + manifest.yml" do
+        Rails.application.config.assets.manifest = "/var/tmp"
+        AssetSync.config.manifest_path.should == "/var/tmp/manifest.yml"
+      end
+    end
+    context "when Rails.application.config.assets.manifest is file" do
+      before { `touch /var/tmp/my_manifest.json` }
+      after { `rm /var/tmp/my_manifest.json` }
+
+      it "config.manifest_path should return manifest" do
+        Rails.application.config.assets.manifest = "/var/tmp/my_manifest.json"
+        AssetSync.config.manifest_path.should == "/var/tmp/my_manifest.json"
+      end
+    end
   end
 
   describe 'with invalid yml' do
